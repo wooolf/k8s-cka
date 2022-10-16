@@ -1,0 +1,27 @@
+---
+all:
+  children:
+    local:
+      hosts:
+        localhost:
+          ansible_connection: local
+          ansible_host: localhost
+          ansible_host_ip: 127.0.0.1
+    kubernetes:
+      vars:
+        ansible_ssh_private_key_file: "~/.ssh/k8s_cluster_rsa"
+        ansible_user: wooolf
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+      children:
+        cluster01:
+          children:
+            controlplane:
+              hosts:
+                controlplane01:
+                  ansible_host: controlplane
+            nodes:
+              hosts:
+                node01:
+                  ansible_host: node01
+                node02:
+                  ansible_host: node02
