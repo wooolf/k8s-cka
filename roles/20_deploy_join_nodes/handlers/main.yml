@@ -1,2 +1,20 @@
 ---
 # handlers file for 20_deploy_join_nodes
+- name: Prepare service
+  block:
+    - name: Setup service
+      ansible.builtin.service:
+        name: crio.service
+        enabled: yes
+        state: started
+      register: crio_service
+      when: cri_o_install.changed
+
+    - name: modprobe
+      ansible.builtin.shell: |
+        modprobe br_netfilter
+      when: crio_service.changed
+
+    - name: Ip forward setup
+      ansible.builtin.shell: |
+        echo 1 > /proc/sys/net/ipv4/ip_forward

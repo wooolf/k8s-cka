@@ -42,5 +42,43 @@
       register: kubeadm_install
       tags:
         - node_additional_software
+
+    # https://cri-o.io/
+    - name: Install CRI-O
+      become: true
+      block:
+        - name: Add repo \#1
+          ansible.builtin.copy:
+            content: "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ OS }}/ /"
+            dest: /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+
+        - name: Add repo \#2
+          ansible.builtin.copy:
+            content: "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ VERSION }}/{{ OS }}/ /"
+            dest: /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:{{ VERSION }}.list
+
+        - name: Add an Apt signing key \#1
+          ansible.builtin.apt_key:
+            url: "https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:{{ VERSION }}/{{ OS }}/Release.key"
+            state: present
+
+        - name: Add an Apt signing key \#2
+          ansible.builtin.apt_key:
+            url: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ OS }}/Release.key"
+            state: present
+
+        - name: Install CRI-O software
+          ansible.builtin.apt:
+            state: present
+            update_cache: yes
+            pkg:
+              - cri-o
+              - cri-o-runc
+          register: cri_o_install
+          notify: Prepare service
+
+      tags:
+        - node_install_cri_o
+
   tags:
     - node_deploy
