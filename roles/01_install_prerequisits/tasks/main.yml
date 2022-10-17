@@ -1,0 +1,23 @@
+---
+# tasks file for 01_install_prerequisits
+- name: Install software on all
+  block:
+    - name: Install tools
+      ansible.builtin.apt:
+        state: present
+        update_cache: yes
+        pkg:
+          - gnupg
+          - software-properties-common
+          - unzip
+          - curl
+          - wget
+          - mlocate
+          - vim
+      tags:
+        - install_tools
+    - name: Update mlocate db
+      command: >
+        updatedb
+  tags:
+    - prerequisits

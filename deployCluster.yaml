@@ -1,0 +1,15 @@
+---
+- name: Prerequisits
+  hosts: kubernetes
+  roles:
+    - { role: 01_install_prerequisits, become: true }
+
+- name: Controlplane Deploy
+  hosts: controlplanes
+  roles:
+    - { role: 10_deploy_controlplanes }
+
+- name: Node Deploy
+  hosts: nodes
+  roles:
+    - { role: 20_deploy_join_nodes }

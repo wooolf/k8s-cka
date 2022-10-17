@@ -15,7 +15,7 @@ all:
       children:
         cluster01:
           children:
-            controlplane:
+            controlplanes:
               hosts:
                 controlplane01:
                   ansible_host: controlplane

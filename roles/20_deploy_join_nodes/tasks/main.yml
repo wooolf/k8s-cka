@@ -1,0 +1,46 @@
+---
+# tasks file for 20_deploy_join_nodes
+- name: Deploy node
+  block:
+    - name: Install adm software
+      become: true
+      ansible.builtin.apt:
+        state: present
+        update_cache: yes
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+      tags:
+        - node_software
+
+    - name: Add keys and repo
+      block:
+        - name: google key
+          become: true
+          ansible.builtin.apt_key:
+            url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+            state: present
+
+        - name: kubernetes repo | apt source
+          become: true
+          ansible.builtin.apt_repository:
+            repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main"
+            state: present
+      tags:
+        - node_additional_software
+
+    - name: Install additional software
+      become: true
+      ansible.builtin.apt:
+        state: present
+        update_cache: yes
+        pkg:
+          - kubelet
+          - kubeadm
+          - kubectl
+      register: kubeadm_install
+      tags:
+        - node_additional_software
+  tags:
+    - node_deploy

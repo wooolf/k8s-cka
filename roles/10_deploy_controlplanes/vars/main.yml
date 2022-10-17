@@ -1,0 +1,4 @@
+---
+# vars file for 10_deploy_controlplanes
+
+kubeadmin_config: /etc/kubernetes/admin.conf
